@@ -132,6 +132,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(QLabel("Tracks (in playback order)"))
         self.track_list = QListWidget()
         self.track_list.setDragDropMode(QListWidget.InternalMove)
+        self.track_list.setSelectionMode(QListWidget.ExtendedSelection)
         self.track_list.model().rowsMoved.connect(self._on_tracks_reordered)
         layout.addWidget(self.track_list)
 
@@ -142,7 +143,9 @@ class MainWindow(QMainWindow):
         remove_btn.clicked.connect(self._remove_track)
         rename_btn = QPushButton("Rename")
         rename_btn.clicked.connect(self._rename_track)
-        for b in (add_btn, remove_btn, rename_btn):
+        clear_btn = QPushButton("Clear All")
+        clear_btn.clicked.connect(self._clear_tracks)
+        for b in (add_btn, remove_btn, rename_btn, clear_btn):
             track_button_row.addWidget(b)
         layout.addLayout(track_button_row)
 
@@ -333,27 +336,64 @@ class MainWindow(QMainWindow):
                 self.track_list.addItem(item)
         self.track_list.blockSignals(False)
 
+    @staticmethod
+    def _normalize_path(path: str) -> str:
+        return os.path.normcase(os.path.abspath(path))
+
     def _add_tracks(self) -> None:
         playlist = self._current_playlist()
         if playlist is None:
             QMessageBox.information(self, "Add Files", "Create or select a playlist first.")
             return
         paths, _ = QFileDialog.getOpenFileNames(self, "Add Audio Files", "", AUDIO_FILE_FILTER)
+        if not paths:
+            return
+
+        existing = {self._normalize_path(t.source_path) for t in playlist.tracks}
+        added = 0
+        skipped = 0
         for path in paths:
+            normalized = self._normalize_path(path)
+            if normalized in existing:
+                skipped += 1
+                continue
+            existing.add(normalized)
             display_name = os.path.splitext(os.path.basename(path))[0]
             playlist.tracks.append(Track(source_path=path, display_name=display_name))
-        if paths:
+            added += 1
+
+        if added:
             self._reload_track_list()
             self._save_project()
+        if skipped:
+            QMessageBox.information(
+                self,
+                "Add Files",
+                f"Skipped {skipped} file(s) already in this playlist.",
+            )
 
     def _remove_track(self) -> None:
         playlist = self._current_playlist()
         if playlist is None:
             return
-        row = self.track_list.currentRow()
-        if row < 0:
+        rows = sorted((idx.row() for idx in self.track_list.selectedIndexes()), reverse=True)
+        if not rows:
             return
-        del playlist.tracks[row]
+        for row in rows:
+            del playlist.tracks[row]
+        self._reload_track_list()
+        self._save_project()
+
+    def _clear_tracks(self) -> None:
+        playlist = self._current_playlist()
+        if playlist is None or not playlist.tracks:
+            return
+        confirm = QMessageBox.question(
+            self, "Clear All Tracks", f"Remove all {len(playlist.tracks)} track(s) from '{playlist.name}'?"
+        )
+        if confirm != QMessageBox.Yes:
+            return
+        playlist.tracks.clear()
         self._reload_track_list()
         self._save_project()
 

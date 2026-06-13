@@ -38,6 +38,20 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## Building a double-click executable
+
+For a packaged app that launches without a terminal or Python install, build a
+standalone executable with [PyInstaller](https://pyinstaller.org/). PyInstaller
+does not cross-compile, so run the build **on the OS you're targeting**:
+
+- **Linux/macOS**: `./build.sh`
+- **Windows**: `build.bat`
+
+This creates a single executable at `dist/ThunderdomePlaylistManager` (or
+`dist/ThunderdomePlaylistManager.exe` on Windows). Copy that file anywhere and
+double-click it to launch the app. `ffmpeg` is still a separate prerequisite —
+either have it on `PATH` or set its location in the app's "ffmpeg path" field.
+
 ## Usage
 
 1. **New** a playlist on the left.
