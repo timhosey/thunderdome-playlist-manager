@@ -1,0 +1,46 @@
+﻿{
+  "Version": 0,
+  "Name": "MUSIC // My Playlist",
+  "Description": "",
+  "Image": "",
+  "Page": 0,
+  "Priority": 18,
+  "Type": "Single",
+  "DefaultSettings": 0,
+  "Options": [
+    {
+      "Name": "Off",
+      "Description": "",
+      "Files": {},
+      "FileSwaps": {},
+      "Manipulations": []
+    },
+    {
+      "Name": "Read the included guide",
+      "Description": "",
+      "Files": {
+        "sound/dam.scd": "sound\\mylist\\example1.scd"
+      },
+      "FileSwaps": {},
+      "Manipulations": []
+    },
+    {
+      "Name": "Read the included guide",
+      "Description": "",
+      "Files": {
+        "sound/dam.scd": "sound\\mylist\\example1.scd"
+      },
+      "FileSwaps": {},
+      "Manipulations": []
+    },
+    {
+      "Name": "Read the included guide",
+      "Description": "",
+      "Files": {
+        "sound/dam.scd": "sound\\mylist\\example1.scd"
+      },
+      "FileSwaps": {},
+      "Manipulations": []
+    }
+  ]
+}
