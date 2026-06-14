@@ -66,6 +66,19 @@ git push origin v1.0.0
 You can also trigger a build manually from the **Actions** tab using the
 "Run workflow" button (workflow_dispatch) without creating a release.
 
+The Linux and macOS builds are uploaded as `.tar.gz` archives (instead of raw
+binaries) so the executable bit survives the download. After downloading:
+
+```bash
+tar -xzf ThunderdomePlaylistManager-linux.tar.gz
+```
+
+This extracts `ThunderdomePlaylistManager` with its executable permission
+already set, so it should run via double-click in your file manager. If your
+file manager still shows an "Open With" prompt instead of running it, right-click
+the file → **Properties** → **Permissions** → enable **Allow executing file as
+program** (Nautilus/GNOME), then double-click again.
+
 ## Usage
 
 1. **New** a playlist on the left.

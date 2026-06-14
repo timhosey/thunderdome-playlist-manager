@@ -17,12 +17,15 @@ jobs:
           - os: windows-latest
             artifact_name: ThunderdomePlaylistManager.exe
             asset_name: ThunderdomePlaylistManager-windows.exe
+            archive: false
           - os: ubuntu-latest
             artifact_name: ThunderdomePlaylistManager
-            asset_name: ThunderdomePlaylistManager-linux
+            asset_name: ThunderdomePlaylistManager-linux.tar.gz
+            archive: true
           - os: macos-latest
             artifact_name: ThunderdomePlaylistManager
-            asset_name: ThunderdomePlaylistManager-macos
+            asset_name: ThunderdomePlaylistManager-macos.tar.gz
+            archive: true
 
     runs-on: ${{ matrix.os }}
 
@@ -48,11 +51,16 @@ jobs:
       - name: Build executable
         run: pyinstaller --noconfirm thunderdome.spec
 
-      - name: Rename artifact
+      - name: Package artifact
         shell: bash
         run: |
           mkdir -p out
-          cp "dist/${{ matrix.artifact_name }}" "out/${{ matrix.asset_name }}"
+          if [ "${{ matrix.archive }}" = "true" ]; then
+            chmod +x "dist/${{ matrix.artifact_name }}"
+            tar -czf "out/${{ matrix.asset_name }}" -C dist "${{ matrix.artifact_name }}"
+          else
+            cp "dist/${{ matrix.artifact_name }}" "out/${{ matrix.asset_name }}"
+          fi
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
