@@ -52,6 +52,20 @@ This creates a single executable at `dist/ThunderdomePlaylistManager` (or
 double-click it to launch the app. `ffmpeg` is still a separate prerequisite —
 either have it on `PATH` or set its location in the app's "ffmpeg path" field.
 
+### Automated releases
+
+Pushing a tag like `v1.0.0` triggers the `.github/workflows/release.yml`
+GitHub Actions workflow, which builds Windows, Linux, and macOS executables
+and attaches them to a GitHub Release for that tag:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+You can also trigger a build manually from the **Actions** tab using the
+"Run workflow" button (workflow_dispatch) without creating a release.
+
 ## Usage
 
 1. **New** a playlist on the left.
